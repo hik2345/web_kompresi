@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Compressor - Kompresi Gambar Lossy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Kompresi Gambar Lossy</h1>
+      <p class="subtitle">Kompres ukuran gambar Anda dengan format JPEG tanpa kehilangan kualitas yang signifikan</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+        <button id="helpBtn" class="btn btn-secondary">
+          ❓ Bantuan
+        </button>
+        <button id="activityLogBtn" class="btn">
+          📋 Log Aktivitas
+        </button>
+      </div>
+    </header>
+
+    <div class="upload-section" id="uploadSection">
+      <div class="drag-drop-text">Seret dan lepas gambar di sini atau</div>
+      <div class="file-input-wrapper">
+        <label for="fileInput" class="file-input-label">
+          <span class="btn-icon">📁</span> Pilih Gambar
+        </label>
+        <input type="file" id="fileInput" accept="image/*">
+      </div>
+      
+      <div class="preview-container" id="previewContainer">
+        <img id="previewImage" class="preview-image" alt="Pratinjau gambar">
+        <div class="file-info" id="fileInfo"></div>
+      </div>
+    </div>
+
+    <div class="compression-options" id="compressionOptions">
+      <div class="option-group">
+        <label for="qualitySlider" class="option-label">Kualitas Kompresi</label>
+        <div class="slider-container">
+          <input type="range" min="0.1" max="1" step="0.1" value="0.7" class="slider" id="qualitySlider">
+          <span class="slider-value" id="qualityValue">70%</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="compressBtn" class="btn btn-primary" disabled>
+        <span class="btn-icon">⚡</span> Kompres Gambar
+      </button>
+      <button id="resetBtn" class="btn btn-error" disabled>
+        <span class="btn-icon">🔄</span> Reset
+      </button>
+    </div>
+
+    <div class="error-message" id="errorMessage"></div>
+
+    <div class="progress-container" id="progressContainer">
+      <div class="progress-text" id="progressText">Mengompresi gambar...</div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="percentage-text" id="percentageText">0%</div>
+    </div>
+
+    <div class="results" id="results">
+      <div class="comparison">
+        <div class="image-card">
+          <div class="image-header">
+            <h3 class="image-title">Gambar Asli</h3>
+          </div>
+          <div class="image-wrapper">
+            <img id="originalImage" class="result-image" alt="Gambar asli">
+          </div>
+          <div class="image-stats">
+            <div class="stat-row">
+              <span class="stat-label">Ukuran File:</span>
+              <span class="stat-value" id="originalSize">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Dimensi:</span>
+              <span class="stat-value" id="originalDimensions">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Format:</span>
+              <span class="stat-value" id="originalFormat">-</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="image-card">
+          <div class="image-header">
+            <h3 class="image-title">Hasil Kompresi</h3>
+          </div>
+          <div class="image-wrapper">
+            <img id="compressedImage" class="result-image" alt="Gambar terkompresi">
+          </div>
+          <div class="image-stats">
+            <div class="stat-row">
+              <span class="stat-label">Ukuran File:</span>
+              <span class="stat-value" id="compressedSize">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Dimensi:</span>
+              <span class="stat-value" id="compressedDimensions">-</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Format:</span>
+              <span class="stat-value">JPEG</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label">Kualitas:</span>
+              <span class="stat-value" id="compressedQuality">-</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="savings" id="savingsText">
+        Anda menghemat <span id="savingsPercentage">0</span>% (<span id="savingsSize">0 KB</span>)
+      </div>
+
+      <div class="action-buttons">
+        <a id="downloadBtn" class="btn btn-secondary" href="#" download>
+          <span class="btn-icon">💾</span> Unduh Gambar
+        </a>
+        <button id="newImageBtn" class="btn">
+          <span class="btn-icon">🖼️</span> Gambar Baru
+        </button>
+      </div>
+    </div>
+
+    <p class="info-text">
+      Catatan: Kompresi lossy akan mengurangi kualitas gambar secara permanen. Hasil kompresi tergantung pada gambar asli dan pengaturan kualitas.
+      Gambar yang diunggah tidak dikirim ke server - semua pemrosesan dilakukan di browser Anda.
+    </p>
+  </div>
+
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Bantuan Kompresi Gambar</h2>
+        <button id="closeHelpBtn" class="btn btn-error">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3>Bagaimana menggunakan:</h3>
+        <ol>
+          <li>Pilih gambar dengan klik "Pilih Gambar" atau seret ke area unggah</li>
+          <li>Atur kualitas dengan slider</li>
+          <li>Klik "Kompres Gambar"</li>
+          <li>Unduh hasilnya</li>
+        </ol>
+        <h3>Fitur:</h3>
+        <ul>
+          <li>Privasi aman, semua dilakukan di browser</li>
+          <li>Drag & drop support</li>
+          <li>Perbandingan visual</li>
+          <li>Informasi ukuran dan kualitas</li>
+          <li>Log aktivitas kompresi</li>
+        </ul>
+        <h3>Tips:</h3>
+        <ul>
+          <li>Gunakan kualitas 70–80% untuk web</li>
+          <li>Detail tinggi → kualitas tinggi</li>
+          <li>Format output: JPEG</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Log Modal -->
+  <div id="activityLogModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2>Log Aktivitas Kompresi</h2>
+        <div>
+          <button id="clearLogBtn" class="btn btn-error" style="margin-right: 1rem;">
+            🗑️ Hapus Log
+          </button>
+          <button id="closeActivityLogBtn" class="btn btn-error">
+            &times; Tutup
+          </button>
+        </div>
+      </div>
+      <div class="modal-body">
+        <ul class="activity-log-list" id="activityLogList">
+          <li class="activity-log-empty">Belum ada aktivitas</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Detail Modal -->
+  <div id="activityDetailModal" class="modal hidden">
+    <div class="modal-content" style="max-width: 800px;">
+      <div class="modal-header">
+        <h2>Detail Kompresi</h2>
+        <button id="closeActivityDetailBtn" class="btn btn-error">&times;</button>
+      </div>
+      <div class="modal-body" id="activityLogDetails">
+        <!-- Details will be inserted here -->
+      </div>
+    </div>
+  </div>
+
+  <canvas id="canvas" class="hidden"></canvas>
+
+  <script src="script.js"></script>
+</body>
+</html>
